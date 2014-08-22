@@ -10,12 +10,21 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
     # Preperation: Load the data sets, each into a seperate data frame
 
     # Load Activity Labels
-    activityLabels <- load_activity_labels()
+    activityLabels <- load_singlecolumn_data_as_vector("activity_labels.txt",columnNr=2)
     if( verbose == TRUE ) print(paste("activityLabels: ", activityLabels))
 
     # Load data sets
-    trainDF <- load_data(triandir)
-    testDF <- load_data(testdir)
+    trainDF <- load_data(paste(traindir,"X_train.txt",sep=.Platform$file.sep))
+    testDF <- load_data(paste(testdir,"X_test.txt",sep=.Platform$file.sep))
+
+    # Load the subject data
+    trainSubjects <- load_singlecolumn_data_as_vector(paste(traindir,"subject_train.txt",sep=.Platform$file.sep))
+    testSubjects <- load_singlecolumn_data_as_vector(paste(testdir,"subject_test.txt",sep=.Platform$file.sep))
+
+    # Load activity data
+    trainActivities <- load_singlecolumn_data_as_vector(paste(traindir,"y_train.txt",sep=.Platform$file.sep))
+    testActivities <- load_singlecolumn_data_as_vector(paste(testdir,"y_test.txt",sep=.Platform$file.sep))
+
     # 1. Merges the training and the test sets to create one data set.
     # 2. Extracts only the measurements on the mean and standard deviation for
     #    each measurement.
@@ -26,6 +35,8 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
 }
 
 # Loading the data set into a data frame
+# Input Arguments:
+#   srcfile - The file to load
 load_data <- function(srcfile){
     df <- emptydataframe()
     result <- tryCatch({
@@ -37,10 +48,13 @@ load_data <- function(srcfile){
     df
 }
 
-# Load the actigity labels into a vector
-load_activity_labels <- function(){
-    df <- load_data("activity_labels.txt")
-    unique(as.vector(df[,2]))
+# Load subject data
+# Input Arguments:
+#   filename - The file to load as a data frame, wrapping load_data()
+#   columnNr - The column number to extract as a vector
+load_singlecolumn_data_as_vector <- function(filename, columnNr=1){
+    df <- load_data(filename)
+    as.vector(df[,columnNr])
 }
 
 # Function to create an empty data frame
