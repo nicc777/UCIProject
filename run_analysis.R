@@ -11,19 +11,28 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
 
     # Load Activity Labels
     activityLabels <- load_singlecolumn_data_as_vector("activity_labels.txt",columnNr=2)
-    if( verbose == TRUE ) print(paste("activityLabels: ", activityLabels))
+    if( verbose == TRUE ) message(paste("activityLabels: ", activityLabels,"\n"))
 
-    # Load data sets
+    # Load data sets (data frame)
     trainDF <- load_data(paste(traindir,"X_train.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("trainDF: nr of rows: ", nrow(trainDF)))
     testDF <- load_data(paste(testdir,"X_test.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("testDF: nr of rows: ", nrow(testDF)))
 
-    # Load the subject data
+    # Load the subject data (vector - object count corresponds to data frame rows)
     trainSubjects <- load_singlecolumn_data_as_vector(paste(traindir,"subject_train.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("trainSubjects: nr of subjects: ", length(trainSubjects)))
     testSubjects <- load_singlecolumn_data_as_vector(paste(testdir,"subject_test.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("testSubjects: nr of subjects: ", length(testSubjects)))
 
-    # Load activity data
+    # Load activity data (vector - object count corresponds to data frame rows)
     trainActivities <- load_singlecolumn_data_as_vector(paste(traindir,"y_train.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("trainActivities: nr of subjects: ", length(trainActivities)))
     testActivities <- load_singlecolumn_data_as_vector(paste(testdir,"y_test.txt",sep=.Platform$file.sep))
+    if( verbose == TRUE ) message(paste("testActivities: nr of subjects: ", length(testActivities)))
+
+    # Add the Subjects and Activities to the data sets for training and test
+    # data sets
 
     # 1. Merges the training and the test sets to create one data set.
     # 2. Extracts only the measurements on the mean and standard deviation for
@@ -42,16 +51,16 @@ load_data <- function(srcfile){
     result <- tryCatch({
         df <- read.table(srcfile)
     }, warning = function(w) {}, error = function(e) {
-        print(paste("ERROR:  ",e))
+        message(paste("ERROR:  ",e))
         stop("Execution halted")
     }, finally = {})
     df
 }
 
-# Load subject data
+# Load data and select one column to return as a vector
 # Input Arguments:
 #   filename - The file to load as a data frame, wrapping load_data()
-#   columnNr - The column number to extract as a vector
+#   columnNr - The column number to extract as a vector (default=1)
 load_singlecolumn_data_as_vector <- function(filename, columnNr=1){
     df <- load_data(filename)
     as.vector(df[,columnNr])
