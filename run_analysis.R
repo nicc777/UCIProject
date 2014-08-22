@@ -26,10 +26,10 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
 }
 
 # Loading the data set into a data frame
-load_data <- function(srcdir){
+load_data <- function(srcfile){
     df <- emptydataframe()
     result <- tryCatch({
-        # x
+        df <- read.table(srcfile)
     }, warning = function(w) {}, error = function(e) {
         print(paste("ERROR:  ",e))
         stop("Execution halted")
@@ -39,7 +39,7 @@ load_data <- function(srcdir){
 
 # Load the actigity labels into a vector
 load_activity_labels <- function(){
-    df <- read.table("activity_labels.txt")
+    df <- load_data("activity_labels.txt")
     unique(as.vector(df[,2]))
 }
 
