@@ -13,10 +13,16 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
     activityLabels <- load_singlecolumn_data_as_vector("activity_labels.txt",columnNr=2)
     if( verbose == TRUE ) message(paste("activityLabels: ", activityLabels,"\n"))
 
+    # Load the features.txt as column labels
+    dataColumnLabels <- load_singlecolumn_data_as_vector("features.txt",columnNr=2)
+    if( verbose == TRUE ) message(paste("dataColumnLabels: ", head(dataColumnLabels),"\n"))
+
     # Load data sets (data frame)
     trainDF <- load_data(paste(traindir,"X_train.txt",sep=.Platform$file.sep))
+    names(trainDF) <- dataColumnLabels
     if( verbose == TRUE ) message(paste("trainDF: nr of rows: ", nrow(trainDF)))
     testDF <- load_data(paste(testdir,"X_test.txt",sep=.Platform$file.sep))
+    names(testDF) <- dataColumnLabels
     if( verbose == TRUE ) message(paste("testDF: nr of rows: ", nrow(testDF)))
 
     # Load the subject data (vector - object count corresponds to data frame rows)
@@ -33,6 +39,12 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
 
     # Add the Subjects and Activities to the data sets for training and test
     # data sets
+    trainDF[,"train.Subject"] <- trainSubjects
+    trainDF[,"train.Activity"] <- trainActivities
+    testDF[,"test.Subject"] <- testSubjects
+    testDF[,"test.Activity"] <- testActivities
+
+    #x <<- testDF      # > View(head(x[,c(500:563)]))      # IGNORE!!! Mark for delete
 
     # 1. Merges the training and the test sets to create one data set.
     # 2. Extracts only the measurements on the mean and standard deviation for
