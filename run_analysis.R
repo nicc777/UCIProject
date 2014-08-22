@@ -6,8 +6,14 @@
 #   testdit  - Location to the directory containing the test data set
 #   outfile  - The file name of the tidy data set
 
-run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
+run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",verbose=FALSE){
     # Preperation: Load the data sets, each into a seperate data frame
+
+    # Load Activity Labels
+    activityLabels <- load_activity_labels()
+    if( verbose == TRUE ) print(paste("activityLabels: ", activityLabels))
+
+    # Load data sets
     trainDF <- load_data(triandir)
     testDF <- load_data(testdir)
     # 1. Merges the training and the test sets to create one data set.
@@ -29,6 +35,12 @@ load_data <- function(srcdir){
         stop("Execution halted")
     }, finally = {})
     df
+}
+
+# Load the actigity labels into a vector
+load_activity_labels <- function(){
+    df <- read.table("activity_labels.txt")
+    unique(as.vector(df[,2]))
 }
 
 # Function to create an empty data frame
