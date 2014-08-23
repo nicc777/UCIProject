@@ -17,6 +17,7 @@ Column names starting with Frequency is the average (mean) of the measurements a
 Columns
 -------
 
+```
 Subject
 	Definition: Subject identifier
 	Value Type: INTEGER 
@@ -24,5 +25,6 @@ Subject
 Activity
 	Definition: Descriptive activity name
 	Value Type: STRING
+```
 
 For the rest of the column definitions, refer to the summary and original CodeBook.
