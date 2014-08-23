@@ -13,6 +13,13 @@ Assumptions
 
 The R script assumes you have R installed and that the source data above has been downloaded and unzipped.
 
+R Library Dependencies
+----------------------
+
+The solution relies on the following additional R libraries:
+
+* reshape2
+
 Script: run_analysis.R
 ----------------------
 
