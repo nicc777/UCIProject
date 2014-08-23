@@ -11,7 +11,6 @@
 run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
 
     # Load libraries on which we depend.
-    library(plyr)
     library(reshape2)
 
     ########################################
@@ -210,4 +209,12 @@ load_singlecolumn_data_as_vector <- function(filename, columnNr=1){
 #   Vector containing the matching strings
 grep_labal_names <- function(labels,regexstr){
     c(grep(regexstr, x=labels, ignore.case=TRUE, value=TRUE))
+}
+
+# Creates an empty data frame
+emptydataframe <- function(){
+    data.frame(Date=as.Date(character()),
+               File=character(),
+               User=character(),
+               stringsAsFactors=FALSE)
 }
