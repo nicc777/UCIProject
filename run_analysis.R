@@ -33,18 +33,20 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
 
     # Load activity data (vector - object count corresponds to data frame rows)
     trainActivities <- load_singlecolumn_data_as_vector(paste(traindir,"y_train.txt",sep=.Platform$file.sep))
+    trainActivities <- remap_activities(trainActivities,activityLabels)
+    trainDF[,"train.ActivityLabel"] <- trainActivities
     if( verbose == TRUE ) message(paste("trainActivities: nr of subjects: ", length(trainActivities)))
     testActivities <- load_singlecolumn_data_as_vector(paste(testdir,"y_test.txt",sep=.Platform$file.sep))
+    testActivities <- remap_activities(testActivities,activityLabels)
+    testDF[,"test.ActivityLabel"] <- testActivities
     if( verbose == TRUE ) message(paste("testActivities: nr of subjects: ", length(testActivities)))
 
-    # Add the Subjects and Activities to the data sets for training and test
-    # data sets
+    # Add the Subjects to the data sets for training and test data sets
     trainDF[,"train.Subject"] <- trainSubjects
-    trainDF[,"train.Activity"] <- trainActivities
     testDF[,"test.Subject"] <- testSubjects
-    testDF[,"test.Activity"] <- testActivities
 
     #x <<- testDF      # > View(head(x[,c(500:563)]))      # IGNORE!!! Mark for delete
+    #y <<- trainDF
 
     # 1. Merges the training and the test sets to create one data set.
     # 2. Extracts only the measurements on the mean and standard deviation for
@@ -53,6 +55,19 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt",ver
     # 4. Appropriately labels the data set with descriptive variable names.
     # 5. Creates a second, independent tidy data set with the average of each
     #    variable for each activity and each subject.
+}
+
+# Remapping of a vector - replace activity index numbers with a labels
+# Input Arguments
+#   x - A vector containing activity values, i.e. c(1,1,2,2,3)
+#   labels - A vector containing labels, i.e. c("col1","col2")
+remap_activities <- function(x, labels){
+    idx = 1
+    for( lbl in labels){
+        x <- gsub(idx, lbl, x)
+        idx <- idx + 1
+    }
+    x
 }
 
 # Loading the data set into a data frame
