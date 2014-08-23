@@ -1,10 +1,12 @@
-# Function to the training and test data sets and produce a independent tidy
-# data set with the average of each variable for each activity and each subject
+# Function that produces a independent tidy data set with the average of each
+# Subject and Activity per Measure
 #
 # Input Arguments:
 #   traindir - Location to the directory containing the training data set
 #   testdit  - Location to the directory containing the test data set
 #   outfile  - The file name of the tidy data set
+# Output:
+#   Data set writtent to file. Filename will be the value in outfile
 
 run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
 
@@ -28,7 +30,7 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
         "ActivityLabel",
         "Subject")
 
-    # Load data sets (data frame)
+    # Load data sets (data frame) and add the column labels
     trainDF <- load_data(paste(traindir,"X_train.txt",sep=.Platform$file.sep))
     names(trainDF) <- dataColumnLabels
     testDF <- load_data(paste(testdir,"X_test.txt",sep=.Platform$file.sep))
@@ -50,9 +52,6 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
     trainDF[,"Subject"] <- trainSubjects
     testDF[,"Subject"] <- testSubjects
 
-    #x <<- testDF      # > View(head(x[,c(500:563)]))      # IGNORE!!! Mark for delete
-    #y <<- trainDF
-
     ########################################
     # Final Phase
     ########################################
@@ -73,18 +72,13 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
         c("^t","^f","std","\\.","\\(\\)"),
         c("Time","Frequency","StandardDiv","",""))
 
-    # Used the following only to have a look at the data. Since we are not
-    # instructed to to anything else with this data frame, I am not writing it
-    # out to file or anything like that. Only using it as starting point for
-    # point 5
-    x <<- tidyDF1
-
     # 5. Creates a second, independent tidy data set with the average of each
     #    variable for each activity and each subject.
 
+    # Get the latest descriptive label names of the measures
     measureLabels <- as.vector(names(tidyDF1)[!(names(tidyDF1) %in% c("Subject", "ActivityLabel"))])
 
-    # Prepare data frame and column names
+    # Prepare data frame and add column names
     tidyDF2 <- prepare_tidy_dataframe(
         sort(unique(as.vector(tidyDF1$Subject))),
         activityLabels,
@@ -95,7 +89,7 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
         measureLabels)
 
     # Create a melted data frame for easy extraction and calculation of the
-    # avg. for measures grouped by Subject and Activity
+    # avg. for measures, grouped by Subject and Activity
     tidyDF1Melted <- melt(
         tidyDF1,
         id.vars=c("Subject", "ActivityLabel"),
@@ -120,9 +114,6 @@ run_analysis <- function(traindir="train", testdir="test", outfile="out.txt"){
         tidyDF2[(tidyDF2$Subject==subjRef & tidyDF2$Activity == actvRef),c(measRef)] <- meanVal
     }
 
-    y <<- tidyDF1Melted
-    xx <<- tidyDF2
-
     # Write the data to file - text file with TAB seperated values.
     write.table(tidyDF2,outfile, sep = "\t", col.names=TRUE, row.names=FALSE)
 
@@ -140,9 +131,7 @@ prepare_tidy_dataframe <- function(subjects, activities, measures){
     subjectCol <- c()
     activityCol <- c()
     for( subjID in subjects){
-        #message(paste("Adding subject: ", subjID))
         for(activityLabel in activities){
-            #message(paste("Adding activity: ", activityLabel))
             subjectCol <- c(subjectCol, subjID)
             activityCol <- c(activityCol, activityLabel)
         }
@@ -221,14 +210,4 @@ load_singlecolumn_data_as_vector <- function(filename, columnNr=1){
 #   Vector containing the matching strings
 grep_labal_names <- function(labels,regexstr){
     c(grep(regexstr, x=labels, ignore.case=TRUE, value=TRUE))
-}
-
-# Function to create an empty data frame
-# Output:
-#   An empty dataframe
-emptydataframe <- function(){
-    data.frame(Date=as.Date(character()),
-               File=character(),
-               User=character(),
-               stringsAsFactors=FALSE)
 }
